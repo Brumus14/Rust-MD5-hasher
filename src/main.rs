@@ -1,7 +1,5 @@
+use std::env;
 use std::fs::read;
-use std::fs::File;
-use std::io;
-use std::io::prelude::*;
 
 macro_rules! round1 {
     ($a: ident, $b: ident, $c: ident, $d: ident, $k: literal, $s: literal, $i: literal, $x: ident, $t: ident) => {
@@ -48,8 +46,26 @@ macro_rules! round4 {
 }
 
 fn main() {
-    let bytes = read("/home/brumus/Downloads/hello").unwrap();
-    md5(bytes);
+    let args: Vec<String> = env::args().collect();
+
+    match args[1].as_str() {
+        "-h" => {
+            print!(
+                r#"Usage: md5 [OPTION]
+-t,         hash passed text
+-f          hash a file at path"#
+            );
+        }
+        "-f" => {
+            let bytes = read(&args[2]).unwrap();
+            md5(bytes);
+        }
+        "-t" => {
+            let bytes = args[2].as_bytes().to_vec();
+            md5(bytes);
+        }
+        _ => println!("md5: Invalid usage"),
+    }
 }
 
 fn md5(bits: Vec<u8>) {
